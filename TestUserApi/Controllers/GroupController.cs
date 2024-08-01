@@ -18,17 +18,17 @@ public class GroupController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetGroup()
+    public async Task<IActionResult> GetGroup(CancellationToken token)
     {
-         var group = await _groupRepositoryService.GetGroupAsync();
+         var group = await _groupRepositoryService.GetGroupAsync(token);
 
          return Ok(group);
     }
     [HttpPost]
-    public async Task<IActionResult> GetGroup(GroupAddDTO groupDTO)
+    public async Task<IActionResult> GetGroup(GroupAddDTO groupDTO,CancellationToken token)
     {
         
-        var group = await _groupRepositoryService.AddGroupAsync(groupDTO.NameGroup);
+        var group = await _groupRepositoryService.AddGroupAsync(groupDTO.NameGroup,token);
 
         return Ok(group);
     }

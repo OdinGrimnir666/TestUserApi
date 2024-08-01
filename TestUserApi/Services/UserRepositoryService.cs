@@ -14,13 +14,13 @@ public class UserRepositoryService(IConfiguration configuration) : IUserReposito
     
     
     
-    public async Task<IEnumerable<User>> GetUsers(int pages)
+    public async Task<IEnumerable<User>> GetUsersAsync(int pages,CancellationToken token)
     {
         var skip = pages != 0 ? pages * this.countPages : pages;
         
         using var connection = new NpgsqlConnection(_connectionString);
 
-        await connection.OpenAsync();
+        await connection.OpenAsync(token);
         
         var qwery = @"SELECT u.id, u.username, u.email, g.group_name as GroupName,g.group_id as IdGroup  
         FROM users u 
@@ -53,7 +53,7 @@ public class UserRepositoryService(IConfiguration configuration) : IUserReposito
     }
 
 
-    public async Task<User> UserAdd(UserAddDTO userAddDto)
+    public async Task<User> UserAddAsync(UserAddDTO userAddDto,CancellationToken token)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         const string insertUserSql = @"
@@ -71,8 +71,8 @@ public class UserRepositoryService(IConfiguration configuration) : IUserReposito
         const string SelectInsertGroupSql = @"INSERT INTO public.usergroups (user_id, group_id)
                 VALUES
                  (@userdid, @groupid);";
-        await connection.OpenAsync();
-        var transaction = await connection.BeginTransactionAsync();
+        await connection.OpenAsync(token);
+        var transaction = await connection.BeginTransactionAsync(token);
        
 
 
@@ -108,7 +108,7 @@ public class UserRepositoryService(IConfiguration configuration) : IUserReposito
 
             }, splitOn: "IdGroup,GroupName", param: new { user_id = userId.FirstOrDefault() });
 
-        await transaction.CommitAsync();
+        await transaction.CommitAsync(token);
         await connection.CloseAsync();
         return userDictionary.Values.FirstOrDefault();
     }
@@ -117,12 +117,12 @@ public class UserRepositoryService(IConfiguration configuration) : IUserReposito
 
 
 
-    public async Task<int> GetCountUsers()
+    public async Task<int> GetCountUsersAsync(CancellationToken token)
     {
         
         var sqlQwery = @"SELECT Count(*)FROM public.users;";
         using var connection = new NpgsqlConnection(_connectionString);
-        await connection.OpenAsync();
+        await connection.OpenAsync(token);
         var countUsers = await connection.QuerySingleAsync<int>(sqlQwery);
         await connection.CloseAsync();
         return countUsers;

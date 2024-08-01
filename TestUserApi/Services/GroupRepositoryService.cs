@@ -14,18 +14,18 @@ public class GroupRepositoryService : IGroupRepositoryService
         this._connectionString = configuration.GetConnectionString("DefaultConnection");
     }
     
-    public async Task<IEnumerable<UserGroup>> GetGroupAsync()
+    public async Task<IEnumerable<UserGroup>> GetGroupAsync(CancellationToken token)
     {
         
         using var connection = new NpgsqlConnection(_connectionString);
-        await connection.OpenAsync();
+        await connection.OpenAsync(token);
         var sqlGetGroup = @"SELECT group_id as idGroup, group_name as groupName FROM public.groups";
-        var group = await connection.QueryAsync<UserGroup>(sqlGetGroup);
+        var group = await connection.QueryAsync<UserGroup>(sqlGetGroup,token);
         await connection.CloseAsync();
         return group;
     }
     
-     public async Task<UserGroup> AddGroupAsync(string groupName)
+     public async Task<UserGroup> AddGroupAsync(string groupName,CancellationToken token)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         const string insertGroupSql = @"
@@ -37,8 +37,8 @@ public class GroupRepositoryService : IGroupRepositoryService
                                 FROM public.""groups""
                                 WHERE group_id = @group_id;";
         
-        await connection.OpenAsync();
-        using (var transaction = await connection.BeginTransactionAsync())
+        await connection.OpenAsync(token);
+        using (var transaction = await connection.BeginTransactionAsync(token))
         {
             
 
@@ -46,7 +46,7 @@ public class GroupRepositoryService : IGroupRepositoryService
                 param: new { groupName = groupName }, transaction);
             
             var groups = await connection.QuerySingleAsync<UserGroup>(getGroup,new { group_id = groupId.FirstOrDefault() });
-            await transaction.CommitAsync();
+            await transaction.CommitAsync(token);
             await connection.CloseAsync();
             return groups;
         }

@@ -5,8 +5,8 @@ namespace TestUserApi.Interfaces;
 
 public interface IUserRepositoryService
 {
-    Task<IEnumerable<User>> GetUsers(int pages);
+    Task<IEnumerable<User>> GetUsersAsync(int pages,CancellationToken token);
     
-    Task<User> UserAdd(UserAddDTO userAddDto); 
-    Task<int> GetCountUsers();
+    Task<User> UserAddAsync(UserAddDTO userAddDto,CancellationToken token); 
+    Task<int> GetCountUsersAsync(CancellationToken token);
 }

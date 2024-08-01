@@ -49,3 +49,4 @@
 /Users/grimnir/RiderProjects/TestUserApi/TestUserApi/bin/Debug/net8.0/Serilog.Sinks.Debug.dll
 /Users/grimnir/RiderProjects/TestUserApi/TestUserApi/bin/Debug/net8.0/Serilog.Sinks.File.dll
 /Users/grimnir/RiderProjects/TestUserApi/TestUserApi/bin/Debug/net8.0/System.Text.Json.dll
+/Users/grimnir/RiderProjects/TestUserApi/TestUserApi/obj/Debug/net8.0/TestUserApi.sourcelink.json

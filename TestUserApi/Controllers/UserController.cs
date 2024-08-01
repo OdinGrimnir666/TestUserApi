@@ -17,23 +17,23 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetUsers(int pages)
+    public async Task<IActionResult> GetUsers(int pages, CancellationToken token)
     {
-        var users = await _userRepositoryService.GetUsers(pages);
+        var users = await _userRepositoryService.GetUsersAsync(pages,token);
         return Ok(users);
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddUsers(UserAddDTO userAddDto)
+    public async Task<IActionResult> AddUsers(UserAddDTO userAddDto,CancellationToken token)
     {
-        var user = await _userRepositoryService.UserAdd(userAddDto);
+        var user = await _userRepositoryService.UserAddAsync(userAddDto,token);
         return Ok(user);
     }
 
     [HttpGet("/CountUsers")]
-    public async Task<IActionResult> GetUsersCount()
+    public async Task<IActionResult> GetUsersCountAsync(CancellationToken token)
     {
-        var countUser =  await _userRepositoryService.GetCountUsers();
+        var countUser =  await _userRepositoryService.GetCountUsersAsync(token);
         return Ok(new {count = countUser});
     }
     
